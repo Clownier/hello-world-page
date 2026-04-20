@@ -50,7 +50,14 @@ let currentGame = null;
 let timers = {};
 
 function clearGame() {
-    Object.values(timers).forEach(t => { if (t) clearInterval(t); if (t) clearTimeout(t); });
+    Object.entries(timers).forEach(([key, t]) => {
+        if (key.includes('Loop')) {
+            cancelAnimationFrame(t);
+        } else {
+            clearInterval(t);
+            clearTimeout(t);
+        }
+    });
     timers = {};
     container.innerHTML = '';
     container.classList.remove('active');
@@ -66,6 +73,9 @@ function addCloseBtn() {
 }
 
 // ==================== 烟花游戏 ====================
+let lastFireworkTime = 0;
+const FIREWORK_INTERVAL = 1200; // 烟花间隔(ms)
+
 function startFireworks() {
     clearGame();
     currentGame = 'fireworks';
@@ -78,14 +88,6 @@ function startFireworks() {
         }
     };
     
-    // 自动释放烟花
-    timers.auto = setInterval(() => {
-        createFirework(
-            Math.random() * window.innerWidth,
-            Math.random() * window.innerHeight * 0.6
-        );
-    }, 1200);
-    
     // 初始烟花
     for (let i = 0; i < 3; i++) {
         setTimeout(() => createFirework(
@@ -93,6 +95,30 @@ function startFireworks() {
             Math.random() * window.innerHeight * 0.4
         ), i * 200);
     }
+    
+    lastFireworkTime = performance.now();
+    timers.fireworkLoop = requestAnimationFrame(fireworkLoop);
+}
+
+// 使用 requestAnimationFrame + 页面可见性检测
+function fireworkLoop(timestamp) {
+    if (currentGame !== 'fireworks') return;
+    
+    // 只有页面可见时才生成烟花
+    if (!document.hidden) {
+        if (timestamp - lastFireworkTime >= FIREWORK_INTERVAL) {
+            createFirework(
+                Math.random() * window.innerWidth,
+                Math.random() * window.innerHeight * 0.6
+            );
+            lastFireworkTime = timestamp;
+        }
+    } else {
+        // 页面不可见时，重置时间基准，避免积攒
+        lastFireworkTime = timestamp;
+    }
+    
+    timers.fireworkLoop = requestAnimationFrame(fireworkLoop);
 }
 
 function createFirework(x, y) {
