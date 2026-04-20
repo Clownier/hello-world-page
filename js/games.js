@@ -91,6 +91,10 @@ function clearGame() {
         }
     });
     timers = {};
+    particles = [];
+    particlePool.length = 0;
+    fireworkCanvas = null;
+    fireworkCtx = null;
     container.innerHTML = '';
     container.classList.remove('active');
     currentGame = null;
@@ -104,9 +108,13 @@ function addCloseBtn() {
     container.appendChild(btn);
 }
 
-// ==================== 烟花游戏 ====================
-let lastFireworkTime = 0;
-const FIREWORK_INTERVAL = 1200; // 烟花间隔(ms)
+// ==================== 烟花游戏 (Canvas优化版) ====================
+let fireworkCanvas = null;
+let fireworkCtx = null;
+let particles = [];
+let autoTimer = 0;
+const MAX_PARTICLES = 800; // 最大粒子数，防止卡顿
+const FIREWORK_INTERVAL = 1200;
 
 function startFireworks() {
     clearGame();
@@ -114,80 +122,136 @@ function startFireworks() {
     container.classList.add('active');
     addCloseBtn();
     
-    container.onclick = (e) => {
-        if (!e.target.classList.contains('close-btn')) {
-            createFirework(e.clientX, e.clientY);
-        }
-    };
+    // 创建Canvas
+    fireworkCanvas = document.createElement('canvas');
+    fireworkCanvas.width = window.innerWidth;
+    fireworkCanvas.height = window.innerHeight;
+    fireworkCanvas.style.position = 'fixed';
+    fireworkCanvas.style.top = '0';
+    fireworkCanvas.style.left = '0';
+    fireworkCanvas.style.pointerEvents = 'none';
+    fireworkCanvas.style.zIndex = '51';
+    container.appendChild(fireworkCanvas);
+    fireworkCtx = fireworkCanvas.getContext('2d');
+    
+    particles = [];
+    autoTimer = 0;
     
     // 初始烟花
     for (let i = 0; i < 3; i++) {
-        setTimeout(() => createFirework(
+        setTimeout(() => spawnFirework(
             Math.random() * window.innerWidth,
             Math.random() * window.innerHeight * 0.4
         ), i * 200);
     }
     
-    lastFireworkTime = performance.now();
+    // 点击事件
+    fireworkCanvas.style.pointerEvents = 'none';
+    container.onclick = (e) => {
+        if (!e.target.classList.contains('close-btn')) {
+            spawnFirework(e.clientX, e.clientY);
+        }
+    };
+    
     timers.fireworkLoop = requestAnimationFrame(fireworkLoop);
 }
 
-// 使用 requestAnimationFrame + 页面可见性检测
 function fireworkLoop(timestamp) {
     if (currentGame !== 'fireworks') return;
     
-    // 只有页面可见时才生成烟花
     if (!document.hidden) {
-        if (timestamp - lastFireworkTime >= FIREWORK_INTERVAL) {
-            createFirework(
+        // 自动烟花
+        if (timestamp - autoTimer >= FIREWORK_INTERVAL) {
+            spawnFirework(
                 Math.random() * window.innerWidth,
                 Math.random() * window.innerHeight * 0.6
             );
-            lastFireworkTime = timestamp;
+            autoTimer = timestamp;
         }
-    } else {
-        // 页面不可见时，重置时间基准，避免积攒
-        lastFireworkTime = timestamp;
+        
+        // 渲染
+        renderFireworks();
     }
     
     timers.fireworkLoop = requestAnimationFrame(fireworkLoop);
 }
 
-function createFirework(x, y) {
-    const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#1dd1a1', '#5f27cd', '#fff'];
-    const count = 35 + Math.floor(Math.random() * 25);
+// 粒子对象池
+const particlePool = [];
+function getParticle() {
+    return particlePool.pop() || { x:0, y:0, vx:0, vy:0, color:'', life:0, size:0 };
+}
+function returnParticle(p) {
+    if (particlePool.length < 500) particlePool.push(p);
+}
+
+function spawnFirework(x, y) {
+    // 限制粒子总数
+    if (particles.length > MAX_PARTICLES) return;
+    
+    const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#1dd1a1', '#5f27cd', '#fff', '#00d2ff'];
+    const count = 30 + Math.floor(Math.random() * 20);
     
     for (let i = 0; i < count; i++) {
-        const p = document.createElement('div');
-        p.className = 'firework-particle';
-        p.style.left = x + 'px';
-        p.style.top = y + 'px';
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        p.style.backgroundColor = color;
-        p.style.boxShadow = `0 0 6px ${color}, 0 0 12px ${color}`;
+        const p = getParticle();
+        p.x = x;
+        p.y = y;
+        p.color = colors[Math.floor(Math.random() * colors.length)];
+        p.size = 2 + Math.random() * 2;
+        p.life = 1;
         
-        const angle = (Math.PI * 2 / count) * i;
-        const speed = 50 + Math.random() * 70;
-        const vx = Math.cos(angle) * speed;
-        const vy = Math.sin(angle) * speed;
+        const angle = (Math.PI * 2 / count) * i + Math.random() * 0.3;
+        const speed = 40 + Math.random() * 50;
+        p.vx = Math.cos(angle) * speed;
+        p.vy = Math.sin(angle) * speed;
         
-        container.appendChild(p);
-        
-        let px = x, py = y, opacity = 1, frame = 0;
-        function animate() {
-            frame++;
-            px += vx / 25;
-            py += vy / 25 + frame * 0.12;
-            opacity -= 0.02;
-            p.style.left = px + 'px';
-            p.style.top = py + 'px';
-            p.style.opacity = opacity;
-            p.style.transform = `scale(${opacity})`;
-            if (opacity > 0) requestAnimationFrame(animate);
-            else p.remove();
-        }
-        requestAnimationFrame(animate);
+        particles.push(p);
     }
+}
+
+function renderFireworks() {
+    const ctx = fireworkCtx;
+    const w = fireworkCanvas.width;
+    const h = fireworkCanvas.height;
+    
+    // 清屏（带残影效果）
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.fillRect(0, 0, w, h);
+    
+    // 更新并绘制粒子
+    for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        
+        // 物理更新
+        p.x += p.vx * 0.016;
+        p.y += p.vy * 0.016 + 0.5; // 重力
+        p.vx *= 0.98;
+        p.vy *= 0.98;
+        p.life -= 0.012;
+        p.size *= 0.995;
+        
+        if (p.life <= 0) {
+            returnParticle(p);
+            particles.splice(i, 1);
+            continue;
+        }
+        
+        // 绘制
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life;
+        ctx.fill();
+        
+        // 光晕
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life * 0.3;
+        ctx.fill();
+    }
+    
+    ctx.globalAlpha = 1;
 }
 
 // ==================== 泡泡游戏 ====================
