@@ -104,41 +104,30 @@
             flex-direction: column;
             align-items: center;
             gap: 1rem;
-            position: relative;
         }
         .games-title {
             color: rgba(255,255,255,0.8);
             font-size: 1rem;
-            margin-bottom: 0.5rem;
         }
         .game-buttons {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            position: relative;
-            z-index: 100;
+            gap: 15px;
         }
         .game-btn {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
             border-radius: 25px;
-            font-size: 0.9rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
-            position: relative;
-            z-index: 100;
         }
         .game-btn:hover {
-            transform: scale(1.05);
+            transform: scale(1.08);
         }
         .game-btn.fireworks { background: linear-gradient(135deg, #ff6b6b, #feca57); color: #fff; }
         .game-btn.bubble { background: linear-gradient(135deg, #5f27cd, #341f97); color: #fff; }
         .game-btn.reaction { background: linear-gradient(135deg, #00d2d3, #01a3a4); color: #fff; }
-        .game-btn.clicker { background: linear-gradient(135deg, #ff9ff3, #f368e0); color: #fff; }
-        .game-btn.mole { background: linear-gradient(135deg, #1dd1a1, #10ac84); color: #fff; }
-        .game-btn:focus { outline: 3px solid rgba(255,255,255,0.5); }
         
         /* 游戏容器 */
         .game-container {
@@ -178,7 +167,7 @@
             transition: transform 0.1s;
         }
         .bubble:hover {
-            transform: scale(1.1);
+            transform: scale(1.15);
         }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
@@ -190,6 +179,17 @@
         @keyframes pop {
             0% { transform: scale(1); opacity: 1; }
             100% { transform: scale(1.5); opacity: 0; }
+        }
+        .game-score {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 60;
         }
         
         /* 反应游戏 */
@@ -211,99 +211,11 @@
             text-align: center;
             padding: 20px;
             transition: background-color 0.1s;
+            z-index: 60;
         }
         .reaction-wait { background: #ee5253; color: #fff; }
         .reaction-go { background: #10ac84; color: #fff; }
         .reaction-result { background: #5f27cd; color: #fff; }
-        
-        /* 点击计数器 */
-        .clicker-display {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 40px 60px;
-            text-align: center;
-            pointer-events: auto;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        .clicker-display:active {
-            transform: translate(-50%, -50%) scale(0.95);
-        }
-        .clicker-count {
-            font-size: 5rem;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(255,255,255,0.5);
-        }
-        .clicker-label {
-            color: rgba(255,255,255,0.7);
-            margin-top: 10px;
-        }
-        .clicker-close {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: none;
-            border: none;
-            color: rgba(255,255,255,0.5);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        
-        /* 打地鼠游戏 */
-        .mole-grid {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            gap: 15px;
-            pointer-events: auto;
-        }
-        .mole-hole {
-            width: 100px;
-            height: 100px;
-            background: rgba(139, 90, 43, 0.8);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            cursor: pointer;
-            transition: transform 0.1s;
-            border: 4px solid rgba(101, 67, 33, 0.9);
-        }
-        .mole-hole:hover {
-            transform: scale(1.05);
-        }
-        .mole-hole.active {
-            background: rgba(139, 90, 43, 1);
-        }
-        .mole-score {
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #fff;
-            font-size: 1.5rem;
-            font-weight: bold;
-            pointer-events: none;
-        }
-        .mole-timer {
-            position: fixed;
-            top: 25%;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #feca57;
-            font-size: 1.2rem;
-            pointer-events: none;
-        }
         
         /* 分数弹出 */
         .score-popup {
@@ -336,7 +248,7 @@
             transition: background 0.3s;
         }
         .close-game:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.4);
         }
     </style>
 </head>
@@ -358,8 +270,6 @@
             <button class="game-btn fireworks" onclick="startFireworks()">🎆 烟花</button>
             <button class="game-btn bubble" onclick="startBubbleGame()">🫧 泡泡</button>
             <button class="game-btn reaction" onclick="startReactionGame()">⚡ 反应</button>
-            <button class="game-btn clicker" onclick="startClicker()">👆 点击</button>
-            <button class="game-btn mole" onclick="startMoleGame()">🔨 打地鼠</button>
         </div>
     </div>
     
@@ -403,14 +313,17 @@
         // 游戏容器
         const gameContainer = document.getElementById('gameContainer');
         let currentGame = null;
+        let fireworksInterval = null;
+        let bubbleInterval = null;
+        let reactionTimeout = null;
+        let bubbleTimeout = null;
 
         // 清除游戏
         function clearGame() {
-            // 清除所有定时器
+            if (fireworksInterval) { clearInterval(fireworksInterval); fireworksInterval = null; }
             if (bubbleInterval) { clearInterval(bubbleInterval); bubbleInterval = null; }
-            if (moleInterval) { clearInterval(moleInterval); moleInterval = null; }
-            if (moleTimerInterval) { clearInterval(moleTimerInterval); moleTimerInterval = null; }
             if (reactionTimeout) { clearTimeout(reactionTimeout); reactionTimeout = null; }
+            if (bubbleTimeout) { clearTimeout(bubbleTimeout); bubbleTimeout = null; }
             
             gameContainer.innerHTML = '';
             gameContainer.classList.remove('active');
@@ -433,25 +346,34 @@
             gameContainer.classList.add('active');
             addCloseButton();
             
+            // 点击释放烟花
             gameContainer.onclick = (e) => {
                 if (e.target.classList.contains('close-game')) return;
                 createFirework(e.clientX, e.clientY);
             };
             
-            // 自动放几个烟花
+            // 自动持续释放烟花 (每1-2秒)
+            fireworksInterval = setInterval(() => {
+                createFirework(
+                    Math.random() * window.innerWidth,
+                    Math.random() * window.innerHeight * 0.7
+                );
+            }, 1200);
+            
+            // 初始放几个烟花
             for (let i = 0; i < 3; i++) {
                 setTimeout(() => {
                     createFirework(
                         Math.random() * window.innerWidth,
-                        Math.random() * window.innerHeight
+                        Math.random() * window.innerHeight * 0.5
                     );
-                }, i * 300);
+                }, i * 200);
             }
         }
 
         function createFirework(x, y) {
-            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#1dd1a1', '#5f27cd'];
-            const particleCount = 30 + Math.random() * 20;
+            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#1dd1a1', '#5f27cd', '#fff'];
+            const particleCount = 30 + Math.random() * 30;
             
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
@@ -459,10 +381,10 @@
                 particle.style.left = x + 'px';
                 particle.style.top = y + 'px';
                 particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.boxShadow = `0 0 6px currentColor`;
+                particle.style.boxShadow = `0 0 6px currentColor, 0 0 12px currentColor`;
                 
-                const angle = (Math.PI * 2 / particleCount) * i;
-                const velocity = 50 + Math.random() * 100;
+                const angle = (Math.PI * 2 / particleCount) * i + Math.random() * 0.2;
+                const velocity = 60 + Math.random() * 80;
                 const vx = Math.cos(angle) * velocity;
                 const vy = Math.sin(angle) * velocity;
                 
@@ -476,12 +398,13 @@
                 function animate() {
                     frame++;
                     posX += vx / 30;
-                    posY += vy / 30 + frame * 0.1; // 重力
-                    opacity -= 0.02;
+                    posY += vy / 30 + frame * 0.15; // 重力
+                    opacity -= 0.018;
                     
                     particle.style.left = posX + 'px';
                     particle.style.top = posY + 'px';
                     particle.style.opacity = opacity;
+                    particle.style.transform = `scale(${opacity})`;
                     
                     if (opacity > 0) {
                         requestAnimationFrame(animate);
@@ -495,7 +418,6 @@
 
         // ========== 泡泡游戏 ==========
         let bubbleScore = 0;
-        let bubbleInterval = null;
 
         function startBubbleGame() {
             clearGame();
@@ -506,22 +428,28 @@
             
             // 显示分数
             const scoreDisplay = document.createElement('div');
-            scoreDisplay.className = 'mole-score';
+            scoreDisplay.className = 'game-score';
             scoreDisplay.id = 'bubbleScore';
-            scoreDisplay.textContent = '🫧 分数: 0';
+            scoreDisplay.textContent = '🫧 分数: 0 | ⏱️ 30秒';
             gameContainer.appendChild(scoreDisplay);
             
             // 生成泡泡
-            bubbleInterval = setInterval(spawnBubble, 500);
+            bubbleInterval = setInterval(spawnBubble, 600);
             
             // 30秒后结束
-            setTimeout(() => {
-                if (currentGame === 'bubble') {
+            let timeLeft = 30;
+            bubbleTimeout = setInterval(() => {
+                timeLeft--;
+                const score = document.getElementById('bubbleScore');
+                if (score) score.textContent = `🫧 分数: ${bubbleScore} | ⏱️ ${timeLeft}秒`;
+                
+                if (timeLeft <= 0) {
                     clearInterval(bubbleInterval);
+                    clearInterval(bubbleTimeout);
                     alert(`🎉 游戏结束！你得了 ${bubbleScore} 分！`);
                     clearGame();
                 }
-            }, 30000);
+            }, 1000);
         }
 
         function spawnBubble() {
@@ -530,18 +458,20 @@
             const bubble = document.createElement('div');
             bubble.className = 'bubble';
             
-            const size = 40 + Math.random() * 40;
-            const x = 50 + Math.random() * (window.innerWidth - size - 100);
-            const y = 100 + Math.random() * (window.innerHeight - size - 150);
+            const size = 50 + Math.random() * 30;
+            // 泡泡在游戏区域内，避开顶部按钮
+            const x = 20 + Math.random() * (window.innerWidth - size - 40);
+            const y = 120 + Math.random() * (window.innerHeight - size - 180);
             
             const emojis = ['🫧', '🎈', '🔴', '🟡', '🟢', '🔵', '🟣'];
-            const colors = ['rgba(255,107,107,0.6)', 'rgba(254,202,87,0.6)', 'rgba(29,209,153,0.6)', 'rgba(72,219,251,0.6)'];
+            const colors = ['rgba(255,107,107,0.7)', 'rgba(254,202,87,0.7)', 'rgba(29,209,153,0.7)', 'rgba(72,219,251,0.7)', 'rgba(255,154,243,0.7)'];
             
             bubble.style.width = size + 'px';
             bubble.style.height = size + 'px';
             bubble.style.left = x + 'px';
             bubble.style.top = y + 'px';
             bubble.style.background = colors[Math.floor(Math.random() * colors.length)];
+            bubble.style.boxShadow = `0 4px 15px rgba(0,0,0,0.3)`;
             bubble.textContent = emojis[Math.floor(Math.random() * emojis.length)];
             
             bubble.onclick = (e) => {
@@ -551,16 +481,21 @@
             
             gameContainer.appendChild(bubble);
             
-            // 3秒后消失
+            // 4秒后消失
             setTimeout(() => {
                 if (bubble.parentNode) bubble.remove();
-            }, 3000);
+            }, 4000);
         }
 
         function popBubble(bubble) {
             bubble.classList.add('bubble-pop');
             bubbleScore += 10;
-            document.getElementById('bubbleScore').textContent = `🫧 分数: ${bubbleScore}`;
+            
+            const score = document.getElementById('bubbleScore');
+            if (score) {
+                const text = score.textContent;
+                score.textContent = text.replace(/分数: \d+/, `分数: ${bubbleScore}`);
+            }
             
             // 弹出分数
             showScorePopup(bubble, '+10', '#1dd1a1');
@@ -583,7 +518,6 @@
 
         // ========== 反应游戏 ==========
         let reactionStartTime = 0;
-        let reactionTimeout = null;
 
         function startReactionGame() {
             clearGame();
@@ -594,7 +528,7 @@
             const box = document.createElement('div');
             box.className = 'reaction-box reaction-wait';
             box.id = 'reactionBox';
-            box.innerHTML = '<div style="font-size:1.2rem">等待绿色...</div><div style="font-size:0.9rem;margin-top:10px;opacity:0.8">点击开始</div>';
+            box.innerHTML = '<div style="font-size:1.3rem">等待绿色...</div><div style="font-size:0.9rem;margin-top:10px;opacity:0.8">点击开始</div>';
             gameContainer.appendChild(box);
             
             box.onclick = startReactionRound;
@@ -612,18 +546,17 @@
             
             reactionTimeout = setTimeout(() => {
                 box.className = 'reaction-box reaction-go';
-                box.innerHTML = '<div style="font-size:1.5rem">点击!</div>';
+                box.innerHTML = '<div style="font-size:2rem">点击!</div>';
                 reactionStartTime = Date.now();
                 box.onclick = showReactionResult;
             }, delay);
             
             // 点击太早
-            document.onclick = (e) => {
-                if (e.target.classList.contains('close-game')) return;
+            box.onclick = () => {
                 if (box.className.includes('reaction-wait') && !box.className.includes('reaction-go')) {
                     clearTimeout(reactionTimeout);
                     box.className = 'reaction-box reaction-result';
-                    box.innerHTML = '<div style="font-size:1.2rem">太早了!</div><div style="font-size:0.9rem;margin-top:10px">点击重试</div>';
+                    box.innerHTML = '<div style="font-size:1.3rem">太早了! 😅</div><div style="font-size:0.9rem;margin-top:10px">点击重试</div>';
                     box.onclick = startReactionRound;
                 }
             };
@@ -635,9 +568,8 @@
             if (!box) return;
             
             box.className = 'reaction-box reaction-result';
-            box.innerHTML = `<div style="font-size:1.5rem">${reactionTime}ms</div><div style="font-size:0.9rem;margin-top:10px">${getReactionMessage(reactionTime)}</div><div style="font-size:0.8rem;margin-top:10px;opacity:0.8">点击再试一次</div>`;
+            box.innerHTML = `<div style="font-size:1.8rem">${reactionTime}ms</div><div style="font-size:1rem;margin-top:10px">${getReactionMessage(reactionTime)}</div><div style="font-size:0.8rem;margin-top:15px;opacity:0.8">点击再试</div>`;
             box.onclick = startReactionRound;
-            document.onclick = null;
         }
 
         function getReactionMessage(ms) {
@@ -647,184 +579,9 @@
             if (ms < 500) return '😊 还不错';
             return '🐢 可以更快哦';
         }
-
-        // ========== 点击计数器 ==========
-        let clickerCount = 0;
-
-        function startClicker() {
-            clearGame();
-            currentGame = 'clicker';
-            clickerCount = 0;
-            gameContainer.classList.add('active');
-            
-            const display = document.createElement('div');
-            display.className = 'clicker-display';
-            display.id = 'clickerDisplay';
-            display.innerHTML = `
-                <button class="clicker-close" onclick="clearGame()">×</button>
-                <div class="clicker-count" id="clickerCount">0</div>
-                <div class="clicker-label">点击这里!</div>
-            `;
-            gameContainer.appendChild(display);
-            
-            display.onclick = (e) => {
-                if (e.target.classList.contains('clicker-close')) return;
-                clickerCount++;
-                document.getElementById('clickerCount').textContent = clickerCount;
-                
-                // 添加点击效果
-                const count = document.getElementById('clickerCount');
-                count.style.transform = 'scale(1.2)';
-                setTimeout(() => count.style.transform = 'scale(1)', 100);
-                
-                // 创建小烟花
-                createClickEffect(e.clientX, e.clientY);
-            };
-        }
-
-        function createClickEffect(x, y) {
-            const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3'];
-            for (let i = 0; i < 8; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'firework';
-                particle.style.left = x + 'px';
-                particle.style.top = y + 'px';
-                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.width = '4px';
-                particle.style.height = '4px';
-                
-                const angle = (Math.PI * 2 / 8) * i;
-                const velocity = 30;
-                
-                gameContainer.appendChild(particle);
-                
-                let posX = x;
-                let posY = y;
-                let opacity = 1;
-                
-                function animate() {
-                    posX += Math.cos(angle) * velocity / 10;
-                    posY += Math.sin(angle) * velocity / 10;
-                    opacity -= 0.05;
-                    
-                    particle.style.left = posX + 'px';
-                    particle.style.top = posY + 'px';
-                    particle.style.opacity = opacity;
-                    
-                    if (opacity > 0) {
-                        requestAnimationFrame(animate);
-                    } else {
-                        particle.remove();
-                    }
-                }
-                requestAnimationFrame(animate);
-            }
-        }
-
-        // ========== 打地鼠游戏 ==========
-        let moleScore = 0;
-        let moleTimeLeft = 30;
-        let moleInterval = null;
-        let moleTimerInterval = null;
-        let activeMole = null;
-
-        function startMoleGame() {
-            clearGame();
-            currentGame = 'mole';
-            moleScore = 0;
-            moleTimeLeft = 30;
-            gameContainer.classList.add('active');
-            addCloseButton();
-            
-            // 分数显示
-            const scoreDisplay = document.createElement('div');
-            scoreDisplay.className = 'mole-score';
-            scoreDisplay.id = 'moleScore';
-            scoreDisplay.textContent = '🔨 分数: 0';
-            gameContainer.appendChild(scoreDisplay);
-            
-            // 时间显示
-            const timerDisplay = document.createElement('div');
-            timerDisplay.className = 'mole-timer';
-            timerDisplay.id = 'moleTimer';
-            timerDisplay.textContent = '⏱️ 剩余: 30秒';
-            gameContainer.appendChild(timerDisplay);
-            
-            // 地鼠网格
-            const grid = document.createElement('div');
-            grid.className = 'mole-grid';
-            grid.id = 'moleGrid';
-            
-            for (let i = 0; i < 9; i++) {
-                const hole = document.createElement('div');
-                hole.className = 'mole-hole';
-                hole.dataset.index = i;
-                hole.textContent = '🕳️';
-                hole.onclick = (e) => hitMole(e, hole);
-                grid.appendChild(hole);
-            }
-            
-            gameContainer.appendChild(grid);
-            
-            // 开始游戏
-            moleInterval = setInterval(showMole, 800);
-            moleTimerInterval = setInterval(updateMoleTimer, 1000);
-        }
-
-        function showMole() {
-            if (currentGame !== 'mole') return;
-            
-            // 清除之前的地鼠
-            if (activeMole !== null) {
-                const prevHole = document.querySelector(`.mole-hole[data-index="${activeMole}"]`);
-                if (prevHole) {
-                    prevHole.textContent = '🕳️';
-                    prevHole.classList.remove('active');
-                }
-            }
-            
-            // 随机选择一个洞
-            activeMole = Math.floor(Math.random() * 9);
-            const hole = document.querySelector(`.mole-hole[data-index="${activeMole}"]`);
-            if (hole) {
-                hole.textContent = '🐹';
-                hole.classList.add('active');
-            }
-        }
-
-        function hitMole(e, hole) {
-            e.stopPropagation();
-            
-            if (hole.classList.contains('active')) {
-                moleScore += 10;
-                document.getElementById('moleScore').textContent = `🔨 分数: ${moleScore}`;
-                hole.textContent = '💥';
-                hole.classList.remove('active');
-                showScorePopup(hole, '+10', '#feca57');
-                
-                setTimeout(() => {
-                    hole.textContent = '🕳️';
-                }, 200);
-            }
-        }
-
-        function updateMoleTimer() {
-            moleTimeLeft--;
-            const timer = document.getElementById('moleTimer');
-            if (timer) {
-                timer.textContent = `⏱️ 剩余: ${moleTimeLeft}秒`;
-            }
-            
-            if (moleTimeLeft <= 0) {
-                clearInterval(moleInterval);
-                clearInterval(moleTimerInterval);
-                alert(`🎉 游戏结束！你打中了 ${moleScore / 10} 只地鼠，得 ${moleScore} 分！`);
-                clearGame();
-            }
-        }
     </script>
     <div class="version-info">
-        <span>v2.0.1</span> | <a href="https://github.com/Clownier/hello-world-page" target="_blank">GitHub</a>
+        <span>v2.1.0</span> | <a href="https://github.com/Clownier/hello-world-page" target="_blank">GitHub</a>
     </div>
 </body>
 </html>
