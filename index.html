@@ -50,20 +50,22 @@
             z-index: 10;
             background: linear-gradient(90deg, 
                 #ff0000, #ff7f00, #ffff00, #00ff00, 
-                #0000ff, #4b0082, #9400d3, #ff1493, #ff0000);
-            background-size: 300% 100%;
+                #0000ff, #4b0082, #9400d3, #ff1493, 
+                #ff1493, #9400d3, #4b0082, #0000ff,
+                #00ff00, #ffff00, #ff7f00, #ff0000);
+            background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: laserMove 3s linear infinite;
-            filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
+            animation: laserMove 4s linear infinite;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.6));
         }
         @keyframes shimmer {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
         }
         @keyframes laserMove {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
         }
         .rainbow-dot {
             position: fixed;
