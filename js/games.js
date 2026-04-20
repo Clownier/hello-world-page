@@ -29,17 +29,49 @@ document.addEventListener('mousemove', (e) => {
 
 // ==================== IP定位 ====================
 async function fetchLocation() {
+    const ipEl = document.getElementById('ipLocation');
+    
+    // 尝试多个API（优先支持HTTPS的）
     try {
-        const res = await fetch('https://ip-api.com/json?lang=zh-CN');
+        // 方案1: ipapi.co (支持HTTPS，免费)
+        const res = await fetch('https://ipapi.co/json/');
         const data = await res.json();
-        if (data.status === 'success') {
-            const loc = data.city || data.regionName || '';
-            document.getElementById('ipLocation').textContent = `📍 ${data.query} | ${loc}, ${data.country}`;
-        } else {
-            document.getElementById('ipLocation').textContent = '📍 位置获取失败';
+        if (data.ip) {
+            const loc = data.city || data.region || '';
+            ipEl.textContent = `📍 ${data.ip} | ${loc}, ${data.country_name}`;
+            return;
         }
+    } catch (e) { console.log('ipapi.co failed'); }
+    
+    try {
+        // 方案2: geolocation-db.com (支持HTTPS)
+        const res = await fetch('https://geolocation-db.com/json/');
+        const data = await res.json();
+        if (data.IPv4) {
+            const loc = data.city || data.state || '';
+            ipEl.textContent = `📍 ${data.IPv4} | ${loc}, ${data.country_name}`;
+            return;
+        }
+    } catch (e) { console.log('geolocation-db failed'); }
+    
+    try {
+        // 方案3: ip.sb (支持HTTPS，返回简单信息)
+        const res = await fetch('https://api.ip.sb/geoip');
+        const data = await res.json();
+        if (data.ip) {
+            const loc = data.city || '';
+            ipEl.textContent = `📍 ${data.ip} | ${loc}, ${data.country}`;
+            return;
+        }
+    } catch (e) { console.log('ip.sb failed'); }
+    
+    // 所有API都失败，只显示IP
+    try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        ipEl.textContent = `📍 ${data.ip}`;
     } catch (e) {
-        document.getElementById('ipLocation').textContent = '📍 无法获取位置';
+        ipEl.textContent = '📍 位置获取失败';
     }
 }
 fetchLocation();
