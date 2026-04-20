@@ -1,0 +1,307 @@
+/* 基础样式 */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow-x: hidden;
+}
+
+/* 主标题 */
+.card {
+    text-align: center;
+    color: #fff;
+    z-index: 10;
+}
+
+h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, #00d2ff, #3a7bd5, #00d2ff);
+    background-size: 200%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+.emoji {
+    font-size: 3rem;
+    display: inline-block;
+    margin-left: 0.5rem;
+    -webkit-text-fill-color: initial;
+}
+
+.subtitle {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.6);
+}
+
+/* 日期时间 */
+.datetime {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 15px 30px;
+    border-radius: 10px;
+    z-index: 10;
+    background: linear-gradient(90deg, 
+        #ff0000, #ff7f00, #ffff00, #00ff00, 
+        #0000ff, #4b0082, #9400d3, #ff1493, 
+        #ff1493, #9400d3, #4b0082, #0000ff,
+        #00ff00, #ffff00, #ff7f00, #ff0000);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: laserMove 4s linear infinite;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.6));
+}
+
+@keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+@keyframes laserMove {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+/* 鼠标彩虹拖尾 */
+.rainbow-dot {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    animation: fadeOut 1s forwards;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.3); }
+}
+
+/* 游戏区域 */
+.games-section {
+    margin-top: 2rem;
+    z-index: 10;
+}
+
+.games-title {
+    color: rgba(255,255,255,0.8);
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+/* 三按钮容器：水平排列 */
+.game-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 按钮基础样式：完全统一 */
+.game-btn {
+    padding: 10px 20px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    font-weight: 600;
+    min-width: 95px;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    /* 绝对不会有position或animation干扰 */
+    position: static;
+    display: block;
+}
+
+.game-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+.game-btn:active {
+    transform: scale(0.96);
+}
+
+/* 三按钮颜色 */
+.btn-fireworks {
+    background: linear-gradient(135deg, #ff6b6b, #feca57);
+}
+
+.btn-bubble {
+    background: linear-gradient(135deg, #5f27cd, #8e44ad);
+}
+
+.btn-reaction {
+    background: linear-gradient(135deg, #00d2d3, #01a3a4);
+}
+
+/* 游戏容器 */
+.game-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+}
+
+.game-container.active {
+    pointer-events: auto;
+    background: rgba(0,0,0,0.3);
+}
+
+/* 关闭按钮 */
+.close-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 100;
+    transition: background 0.2s;
+}
+
+.close-btn:hover {
+    background: rgba(255,255,255,0.4);
+}
+
+/* 烟花粒子 */
+.firework-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+/* 泡泡样式 */
+.game-bubble {
+    position: absolute;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #fff;
+    transition: transform 0.1s;
+}
+
+.game-bubble:hover {
+    transform: scale(1.15);
+}
+
+.bubble-pop {
+    animation: bubblePop 0.3s forwards;
+}
+
+@keyframes bubblePop {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* 游戏分数显示 */
+.game-score {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 60;
+    background: rgba(0,0,0,0.5);
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+
+/* 反应测试方块 */
+.reaction-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: auto;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+    z-index: 60;
+    color: #fff;
+}
+
+.reaction-wait { background: #ee5253; }
+.reaction-go { background: #10ac84; }
+.reaction-result { background: #5f27cd; }
+
+/* 分数弹出 */
+.score-popup {
+    position: fixed;
+    font-weight: bold;
+    pointer-events: none;
+    animation: scoreFloat 1s forwards;
+    z-index: 100;
+    font-size: 1.5rem;
+}
+
+@keyframes scoreFloat {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
+}
+
+/* 右下角信息 */
+.footer-info {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    text-align: right;
+    z-index: 100;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+}
+
+.footer-info a {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+}
+
+.footer-info a:hover {
+    color: #00d2ff;
+}
+
+.ip-location {
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+}
