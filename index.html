@@ -111,19 +111,24 @@
         }
         .game-buttons {
             display: flex;
-            gap: 15px;
+            gap: 12px;
+            justify-content: center;
         }
         .game-btn {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 25px;
-            font-size: 1rem;
+            border-radius: 20px;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
+            min-width: 90px;
         }
         .game-btn:hover {
-            transform: scale(1.08);
+            transform: scale(1.05);
+        }
+        .game-btn:active {
+            transform: scale(0.98);
         }
         .game-btn.fireworks { background: linear-gradient(135deg, #ff6b6b, #feca57); color: #fff; }
         .game-btn.bubble { background: linear-gradient(135deg, #5f27cd, #341f97); color: #fff; }
@@ -581,7 +586,7 @@
         }
     </script>
     <div class="version-info">
-        <span>v2.1.0</span> | <a href="https://github.com/Clownier/hello-world-page" target="_blank">GitHub</a>
+        <span>v2.1.1</span> | <a href="https://github.com/Clownier/hello-world-page" target="_blank">GitHub</a>
     </div>
 </body>
 </html>
