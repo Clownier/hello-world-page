@@ -1,47 +1,60 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello World</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            min-height: 100vh;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-        .card {
-            text-align: center;
-            color: #fff;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
         h1 {
             font-size: 4rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, #00d2ff, #3a7bd5, #00d2ff);
-            background-size: 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmer 3s ease-in-out infinite;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
         }
-        p {
-            margin-top: 1rem;
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.6);
+        .datetime {
+            font-size: 2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.1);
+            padding: 15px 30px;
+            border-radius: 10px;
+            margin-top: 10px;
         }
-        @keyframes shimmer {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        .date {
+            color: #ffd700;
+        }
+        .time {
+            color: #00ff88;
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>Hello World 🌍</h1>
-        <p>It works!</p>
+    <h1>Hello World</h1>
+    <div class="datetime">
+        <span class="date" id="date"></span>
+        <span> | </span>
+        <span class="time" id="time"></span>
     </div>
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            const dateStr = now.toLocaleDateString('zh-CN', options);
+            const timeStr = now.toLocaleTimeString('zh-CN', { hour12: false });
+            document.getElementById('date').textContent = dateStr;
+            document.getElementById('time').textContent = timeStr;
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+    </script>
 </body>
 </html>
