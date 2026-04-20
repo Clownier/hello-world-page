@@ -80,6 +80,21 @@
             0% { opacity: 1; transform: scale(1); }
             100% { opacity: 0; transform: scale(0.3); }
         }
+        .version-info {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.5);
+            z-index: 100;
+        }
+        .version-info a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+        }
+        .version-info a:hover {
+            color: #00d2ff;
+        }
     </style>
 </head>
 <body>
@@ -126,5 +141,8 @@
             setTimeout(() => dot.remove(), 1000);
         });
     </script>
+    <div class="version-info">
+        <span>v1.0.0</span> | <a href="https://github.com/Clownier/hello-world-page" target="_blank">GitHub</a>
+    </div>
 </body>
 </html>
