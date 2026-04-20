@@ -116,26 +116,33 @@
             font-size: 1rem;
         }
         .game-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 12px !important;
+            justify-content: center !important;
+            align-items: center !important;
         }
         .game-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            min-width: 90px;
+            padding: 10px 20px !important;
+            border: none !important;
+            border-radius: 20px !important;
+            font-size: 0.95rem !important;
+            cursor: pointer !important;
+            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+            font-weight: 600 !important;
+            min-width: 100px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
         .game-btn:hover {
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         .game-btn:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
         }
+        /* 三按钮统一样式：圆角矩形，仅背景色不同 */
         .game-btn.fireworks { background: linear-gradient(135deg, #ff6b6b, #feca57); color: #fff; }
         .game-btn.bubble { background: linear-gradient(135deg, #5f27cd, #341f97); color: #fff; }
         .game-btn.reaction { background: linear-gradient(135deg, #00d2d3, #01a3a4); color: #fff; }
@@ -613,7 +620,7 @@
     </script>
     <div class="version-info">
         <div class="ip-info" id="ipInfo">📍 正在获取位置...</div>
-        <span>v2.2.0</span> | <a href="https://github.com/Clownier/hello-world-page" target="_blank">GitHub</a>
+        <span>v2.2.1</span> | <a href="https://github.com/Clownier/hello-world-page" target="_blank">GitHub</a>
     </div>
 </body>
 </html>
