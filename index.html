@@ -99,11 +99,12 @@
         /* 游戏区域 */
         .games-section {
             margin-top: 2rem;
-            z-index: 10;
+            z-index: 100;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1rem;
+            position: relative;
         }
         .games-title {
             color: rgba(255,255,255,0.8);
@@ -115,6 +116,8 @@
             gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
+            position: relative;
+            z-index: 100;
         }
         .game-btn {
             padding: 10px 20px;
@@ -124,6 +127,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
+            position: relative;
+            z-index: 100;
         }
         .game-btn:hover {
             transform: scale(1.05);
@@ -133,6 +138,7 @@
         .game-btn.reaction { background: linear-gradient(135deg, #00d2d3, #01a3a4); color: #fff; }
         .game-btn.clicker { background: linear-gradient(135deg, #ff9ff3, #f368e0); color: #fff; }
         .game-btn.mole { background: linear-gradient(135deg, #1dd1a1, #10ac84); color: #fff; }
+        .game-btn:focus { outline: 3px solid rgba(255,255,255,0.5); }
         
         /* 游戏容器 */
         .game-container {
@@ -143,6 +149,10 @@
             height: 100%;
             pointer-events: none;
             z-index: 50;
+        }
+        .game-container.active {
+            pointer-events: auto;
+            background: rgba(0,0,0,0.3);
         }
         
         /* 烟花效果 */
@@ -396,7 +406,14 @@
 
         // 清除游戏
         function clearGame() {
+            // 清除所有定时器
+            if (bubbleInterval) { clearInterval(bubbleInterval); bubbleInterval = null; }
+            if (moleInterval) { clearInterval(moleInterval); moleInterval = null; }
+            if (moleTimerInterval) { clearInterval(moleTimerInterval); moleTimerInterval = null; }
+            if (reactionTimeout) { clearTimeout(reactionTimeout); reactionTimeout = null; }
+            
             gameContainer.innerHTML = '';
+            gameContainer.classList.remove('active');
             currentGame = null;
         }
 
@@ -413,10 +430,8 @@
         function startFireworks() {
             clearGame();
             currentGame = 'fireworks';
+            gameContainer.classList.add('active');
             addCloseButton();
-            
-            gameContainer.style.pointerEvents = 'auto';
-            gameContainer.style.cursor = 'crosshair';
             
             gameContainer.onclick = (e) => {
                 if (e.target.classList.contains('close-game')) return;
@@ -486,6 +501,7 @@
             clearGame();
             currentGame = 'bubble';
             bubbleScore = 0;
+            gameContainer.classList.add('active');
             addCloseButton();
             
             // 显示分数
@@ -494,8 +510,6 @@
             scoreDisplay.id = 'bubbleScore';
             scoreDisplay.textContent = '🫧 分数: 0';
             gameContainer.appendChild(scoreDisplay);
-            
-            gameContainer.style.pointerEvents = 'auto';
             
             // 生成泡泡
             bubbleInterval = setInterval(spawnBubble, 500);
@@ -517,8 +531,8 @@
             bubble.className = 'bubble';
             
             const size = 40 + Math.random() * 40;
-            const x = Math.random() * (window.innerWidth - size);
-            const y = Math.random() * (window.innerHeight - size);
+            const x = 50 + Math.random() * (window.innerWidth - size - 100);
+            const y = 100 + Math.random() * (window.innerHeight - size - 150);
             
             const emojis = ['🫧', '🎈', '🔴', '🟡', '🟢', '🔵', '🟣'];
             const colors = ['rgba(255,107,107,0.6)', 'rgba(254,202,87,0.6)', 'rgba(29,209,153,0.6)', 'rgba(72,219,251,0.6)'];
@@ -574,12 +588,13 @@
         function startReactionGame() {
             clearGame();
             currentGame = 'reaction';
+            gameContainer.classList.add('active');
             addCloseButton();
             
             const box = document.createElement('div');
             box.className = 'reaction-box reaction-wait';
             box.id = 'reactionBox';
-            box.innerHTML = '<div style="font-size:1.2rem">等待绿色...</div><div style="font-size:0.9rem;margin-top:10px;opacity:0.8">点击任意位置开始</div>';
+            box.innerHTML = '<div style="font-size:1.2rem">等待绿色...</div><div style="font-size:0.9rem;margin-top:10px;opacity:0.8">点击开始</div>';
             gameContainer.appendChild(box);
             
             box.onclick = startReactionRound;
@@ -640,6 +655,7 @@
             clearGame();
             currentGame = 'clicker';
             clickerCount = 0;
+            gameContainer.classList.add('active');
             
             const display = document.createElement('div');
             display.className = 'clicker-display';
@@ -717,6 +733,7 @@
             currentGame = 'mole';
             moleScore = 0;
             moleTimeLeft = 30;
+            gameContainer.classList.add('active');
             addCloseButton();
             
             // 分数显示
@@ -807,7 +824,7 @@
         }
     </script>
     <div class="version-info">
-        <span>v2.0.0</span> | <a href="https://github.com/Clownier/hello-world-page" target="_blank">GitHub</a>
+        <span>v2.0.1</span> | <a href="https://github.com/Clownier/hello-world-page" target="_blank">GitHub</a>
     </div>
 </body>
 </html>
