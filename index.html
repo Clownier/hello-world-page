@@ -30,6 +30,12 @@
             -webkit-text-fill-color: transparent;
             animation: shimmer 3s ease-in-out infinite;
         }
+        .emoji {
+            font-size: 3rem;
+            display: inline-block;
+            margin-left: 0.5rem;
+            -webkit-text-fill-color: initial;
+        }
         p {
             margin-top: 1rem;
             font-size: 1.2rem;
@@ -38,21 +44,26 @@
         .datetime {
             margin-top: 2rem;
             font-size: 1.5rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-            background: rgba(255,255,255,0.1);
+            font-weight: 600;
             padding: 15px 30px;
             border-radius: 10px;
             z-index: 10;
-        }
-        .date {
-            color: #ffd700;
-        }
-        .time {
-            color: #00ff88;
+            background: linear-gradient(90deg, 
+                #ff0000, #ff7f00, #ffff00, #00ff00, 
+                #0000ff, #4b0082, #9400d3, #ff1493, #ff0000);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: laserMove 3s linear infinite;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
         }
         @keyframes shimmer {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
+        }
+        @keyframes laserMove {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
         .rainbow-dot {
             position: fixed;
@@ -71,13 +82,13 @@
 </head>
 <body>
     <div class="card">
-        <h1>Hello World 🌍</h1>
+        <h1>Hello World<span class="emoji">🌍</span></h1>
         <p>It works!</p>
     </div>
     <div class="datetime">
-        <span class="date" id="date"></span>
+        <span id="date"></span>
         <span> | </span>
-        <span class="time" id="time"></span>
+        <span id="time"></span>
     </div>
     <script>
         // 更新日期时间
