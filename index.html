@@ -1,35 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello World</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             overflow: hidden;
+        }
+        .card {
+            text-align: center;
+            color: #fff;
+            z-index: 10;
         }
         h1 {
             font-size: 4rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
-            z-index: 10;
+            font-weight: 700;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5, #00d2ff);
+            background-size: 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        p {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.6);
         }
         .datetime {
-            font-size: 2rem;
+            margin-top: 2rem;
+            font-size: 1.5rem;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
             background: rgba(255,255,255,0.1);
             padding: 15px 30px;
             border-radius: 10px;
-            margin-top: 10px;
             z-index: 10;
         }
         .date {
@@ -37,6 +49,10 @@
         }
         .time {
             color: #00ff88;
+        }
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         .rainbow-dot {
             position: fixed;
@@ -54,7 +70,10 @@
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+    <div class="card">
+        <h1>Hello World 🌍</h1>
+        <p>It works!</p>
+    </div>
     <div class="datetime">
         <span class="date" id="date"></span>
         <span> | </span>
@@ -75,15 +94,8 @@
 
         // 鼠标彩虹拖尾特效
         const rainbowColors = [
-            '#ff0000', // 红
-            '#ff7f00', // 橙
-            '#ffff00', // 黄
-            '#00ff00', // 绿
-            '#0000ff', // 蓝
-            '#4b0082', // 靛
-            '#9400d3', // 紫
-            '#ff1493', // 粉
-            '#00ffff', // 青
+            '#ff0000', '#ff7f00', '#ffff00', '#00ff00',
+            '#0000ff', '#4b0082', '#9400d3', '#ff1493', '#00ffff'
         ];
         let colorIndex = 0;
 
@@ -96,12 +108,9 @@
             dot.style.boxShadow = `0 0 10px ${rainbowColors[colorIndex]}, 0 0 20px ${rainbowColors[colorIndex]}`;
             
             document.body.appendChild(dot);
-            
             colorIndex = (colorIndex + 1) % rainbowColors.length;
             
-            setTimeout(() => {
-                dot.remove();
-            }, 1000);
+            setTimeout(() => dot.remove(), 1000);
         });
     </script>
 </body>
