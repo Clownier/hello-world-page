@@ -113,8 +113,10 @@ let fireworkCanvas = null;
 let fireworkCtx = null;
 let particles = [];
 let autoTimer = 0;
-const MAX_PARTICLES = 800; // 最大粒子数，防止卡顿
+let lastClickTime = 0;
+const MAX_PARTICLES = 600;
 const FIREWORK_INTERVAL = 1200;
+const CLICK_THROTTLE = 50; // 点击节流(ms)
 
 function startFireworks() {
     clearGame();
@@ -136,6 +138,7 @@ function startFireworks() {
     
     particles = [];
     autoTimer = 0;
+    lastClickTime = 0;
     
     // 初始烟花
     for (let i = 0; i < 3; i++) {
@@ -145,11 +148,14 @@ function startFireworks() {
         ), i * 200);
     }
     
-    // 点击事件
-    fireworkCanvas.style.pointerEvents = 'none';
+    // 点击事件（带节流）
     container.onclick = (e) => {
         if (!e.target.classList.contains('close-btn')) {
-            spawnFirework(e.clientX, e.clientY);
+            const now = performance.now();
+            if (now - lastClickTime >= CLICK_THROTTLE) {
+                lastClickTime = now;
+                spawnFirework(e.clientX, e.clientY);
+            }
         }
     };
     
@@ -186,11 +192,17 @@ function returnParticle(p) {
 }
 
 function spawnFirework(x, y) {
-    // 限制粒子总数
-    if (particles.length > MAX_PARTICLES) return;
+    // 动态粒子数：根据当前粒子数量调整
+    const current = particles.length;
+    if (current >= MAX_PARTICLES) return; // 已达上限，不生成
+    
+    // 越接近上限，生成越少
+    const ratio = Math.max(0.2, 1 - current / MAX_PARTICLES);
+    const baseCount = 25;
+    const count = Math.floor(baseCount * ratio);
+    if (count < 5) return; // 太少就不生成了
     
     const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#1dd1a1', '#5f27cd', '#fff', '#00d2ff'];
-    const count = 30 + Math.floor(Math.random() * 20);
     
     for (let i = 0; i < count; i++) {
         const p = getParticle();
@@ -201,7 +213,7 @@ function spawnFirework(x, y) {
         p.life = 1;
         
         const angle = (Math.PI * 2 / count) * i + Math.random() * 0.3;
-        const speed = 40 + Math.random() * 50;
+        const speed = 35 + Math.random() * 40;
         p.vx = Math.cos(angle) * speed;
         p.vy = Math.sin(angle) * speed;
         
@@ -215,7 +227,7 @@ function renderFireworks() {
     const h = fireworkCanvas.height;
     
     // 清屏（带残影效果）
-    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
     ctx.fillRect(0, 0, w, h);
     
     // 更新并绘制粒子
@@ -224,30 +236,23 @@ function renderFireworks() {
         
         // 物理更新
         p.x += p.vx * 0.016;
-        p.y += p.vy * 0.016 + 0.5; // 重力
-        p.vx *= 0.98;
-        p.vy *= 0.98;
-        p.life -= 0.012;
-        p.size *= 0.995;
+        p.y += p.vy * 0.016 + 0.6; // 重力
+        p.vx *= 0.97;
+        p.vy *= 0.97;
+        p.life -= 0.015;
+        p.size *= 0.99;
         
-        if (p.life <= 0) {
+        if (p.life <= 0 || p.size < 0.5) {
             returnParticle(p);
             particles.splice(i, 1);
             continue;
         }
         
-        // 绘制
+        // 绘制（简化：只画一个圆）
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.life;
-        ctx.fill();
-        
-        // 光晕
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.life * 0.3;
         ctx.fill();
     }
     
