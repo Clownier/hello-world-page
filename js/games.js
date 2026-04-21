@@ -226,9 +226,8 @@ function renderFireworks() {
     const w = fireworkCanvas.width;
     const h = fireworkCanvas.height;
     
-    // 清屏（带残影效果）
-    ctx.fillStyle = 'rgba(0,0,0,0.18)';
-    ctx.fillRect(0, 0, w, h);
+    // 完全清屏（不叠加黑色）
+    ctx.clearRect(0, 0, w, h);
     
     // 更新并绘制粒子
     for (let i = particles.length - 1; i >= 0; i--) {
@@ -248,15 +247,17 @@ function renderFireworks() {
             continue;
         }
         
-        // 绘制（简化：只画一个圆）
+        // 绘制粒子 + 光晕（单次绘制，用 shadowBlur 模拟光晕）
+        ctx.save();
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.life;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
         ctx.fill();
+        ctx.restore();
     }
-    
-    ctx.globalAlpha = 1;
 }
 
 // ==================== 泡泡游戏 ====================
